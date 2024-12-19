@@ -10,7 +10,7 @@
 namespace {
     const int k_new = -1; // channel 未添加到 poller 中
     const int k_added = 1;  // channel 已添加到 poller 中
-    const int k_deled = 2;  // channel 从 poller 中删除
+    const int k_deleted = 2;  // channel 从 poller 中删除
 }
 
 lee::epoll_poller::epoll_poller(event_loop* loop): 
@@ -64,7 +64,7 @@ void lee::epoll_poller::update_channel(channel* chann) {
     LOG_FMT_INFO("func = %s -> fd = %d, events = %d, index = %d\n", 
             __FUNCTION__, chann->fd(), chann->events(), chann->index());
 
-    if (index == k_new || index == k_deled) {
+    if (index == k_new || index == k_deleted) {
         if (index == k_new) {
             channels_[fd] = chann;
         }
@@ -73,7 +73,7 @@ void lee::epoll_poller::update_channel(channel* chann) {
     } else {
         if (chann->is_none_event()) {    
             update(EPOLL_CTL_DEL, chann);
-            chann->set_index(k_deled);
+            chann->set_index(k_deleted);
         } else {
             update(EPOLL_CTL_MOD, chann);
         }
