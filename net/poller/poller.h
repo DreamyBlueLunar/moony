@@ -10,7 +10,15 @@ namespace lee {
 class event_loop;
 class channel;
 
-class poller : lee::noncopyable {
+/**
+ * event_loop、channel、poller之间的关系？
+ * A: 一个线程对应一个 event_loop，一个 event_loop 由一个 poller 实现，
+ * 而这个线程可以是主线程，可以是工作线程，显然一个线程处理的事件不止一个，
+ * 所以可以对应多个 channel。这里的channel显然可以看作是 reactor 感兴趣的事件的封装。
+ * 
+ * poller 封装了一个 I/O复用接口，还维护了一个存放 channel 的 map，对应 Reactor 模式中的 Demultiplexer
+ */
+class poller : noncopyable {
 public:
     using channel_list = std::vector<channel*>;
 
