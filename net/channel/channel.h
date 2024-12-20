@@ -30,10 +30,10 @@ public:
     void tie(const std::shared_ptr<void>&);
 
     void handle_event(time_stamp receieve_time);
-    void set_read_callback(read_event_callback& cb) {    read_callback_ = std::move(cb);    }
-    void set_write_callback(event_callback& cb) {   write_callback_ = std::move(cb);    }
-    void set_close_callback(event_callback& cb) {   close_callback_ = std::move(cb);    }
-    void set_error_callback(event_callback& cb) {   error_callback_ = std::move(cb);    }
+    void set_read_callback(read_event_callback cb) {    read_callback_ = std::move(cb);    }
+    void set_write_callback(event_callback cb) {   write_callback_ = std::move(cb);    }
+    void set_close_callback(event_callback cb) {   close_callback_ = std::move(cb);    }
+    void set_error_callback(event_callback cb) {   error_callback_ = std::move(cb);    }
 
     int fd() const {    return fd_; }
     int events() const {    return events_; }
