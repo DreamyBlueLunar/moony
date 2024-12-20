@@ -7,7 +7,7 @@ const int k_none_event_ = 0;
 const int k_read_event_ = EPOLLIN | EPOLLPRI;
 const int k_write_event_ = EPOLLOUT;
 
-moony::channel::channel(event_loop* loop, int fd):
+moony::channel::channel(moony::event_loop* loop, int fd):
                         loop_(loop), fd_(fd),
                         events_(0), revents_(0),
                         idx_(-1), tied_(false) {}
