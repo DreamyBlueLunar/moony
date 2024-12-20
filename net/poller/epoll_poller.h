@@ -6,7 +6,7 @@
 #include <sys/epoll.h>
 #include <vector>
 
-namespace lee {
+namespace moony {
 class event_loop;
 class channel;
 

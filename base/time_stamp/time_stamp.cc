@@ -2,16 +2,16 @@
 
 #include <time.h>
 
-lee::time_stamp::time_stamp(): microSecondsSinceEpoch_(0) {}
+moony::time_stamp::time_stamp(): microSecondsSinceEpoch_(0) {}
 
-lee::time_stamp::time_stamp(int microSecondsSinceEpoch):
+moony::time_stamp::time_stamp(int microSecondsSinceEpoch):
     microSecondsSinceEpoch_(microSecondsSinceEpoch) {}
 
-lee::time_stamp lee::time_stamp::now() {
+moony::time_stamp moony::time_stamp::now() {
     return time_stamp(time(NULL));
 }
 
-std::string lee::time_stamp::to_string() const {
+std::string moony::time_stamp::to_string() const {
     tm* tm = localtime(&microSecondsSinceEpoch_);
     char buf[32] = {0};
 

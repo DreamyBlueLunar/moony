@@ -13,7 +13,7 @@ namespace {
     const int k_deleted = 2;  // channel 从 poller 中删除
 }
 
-lee::epoll_poller::epoll_poller(event_loop* loop): 
+moony::epoll_poller::epoll_poller(moony::event_loop* loop): 
          poller(loop),
          epoll_fd_(::epoll_create(1)),
          events_(k_init_event_list_size) {
@@ -22,12 +22,12 @@ lee::epoll_poller::epoll_poller(event_loop* loop):
     }
 }
 
-lee::epoll_poller::~epoll_poller() {
+moony::epoll_poller::~epoll_poller() {
     ::close(epoll_fd_);
 }
 
 // 重写 poller 基类的纯虚函数
-lee::time_stamp lee::epoll_poller::poll_wait(int timeout_ms, 
+moony::time_stamp moony::epoll_poller::poll_wait(int timeout_ms, 
         channel_list* active_channels) {
     // LOG_FMT_DEBUG("");
     LOG_FMT_INFO("func = %s -> fd count: %ld\n", __FUNCTION__, channels_.size());
@@ -57,7 +57,7 @@ lee::time_stamp lee::epoll_poller::poll_wait(int timeout_ms,
 }
 
 // 通过 update() 函数更改 channel
-void lee::epoll_poller::update_channel(channel* chann) {
+void moony::epoll_poller::update_channel(moony::channel* chann) {
     const int index = chann->index();
     int fd = chann->fd();
 
@@ -81,7 +81,7 @@ void lee::epoll_poller::update_channel(channel* chann) {
 }
 
 // 通过 update() 函数删除 channel
-void lee::epoll_poller::remove_channel(channel* chann) {
+void moony::epoll_poller::remove_channel(moony::channel* chann) {
     int fd = chann->fd();
     int index = chann->index();
 
@@ -97,7 +97,7 @@ void lee::epoll_poller::remove_channel(channel* chann) {
 }
 
 // 填写活跃的 channels
-void lee::epoll_poller::fill_active_channels(int num_events, 
+void moony::epoll_poller::fill_active_channels(int num_events, 
         channel_list* active_channels) const {
     for (int i = 0; i < num_events; i ++) {
         channel* chann = static_cast<channel*>(events_[i].data.ptr);
@@ -107,7 +107,7 @@ void lee::epoll_poller::fill_active_channels(int num_events,
 }
 
 // 更新 channel，调用 epoll_ctl 做具体的操作
-void lee::epoll_poller::update(int op, channel* chann) {
+void moony::epoll_poller::update(int op, moony::channel* chann) {
     epoll_event ev;
     bzero(&ev, sizeof(epoll_event));
     ev.data.ptr = chann;

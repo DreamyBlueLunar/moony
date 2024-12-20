@@ -1,6 +1,6 @@
 #pragma once
 
-namespace lee {
+namespace moony {
 /* 
  * 设计0：noncopyable
  * 禁用拷贝构造函数和赋值操作，隐藏掉默认构造函数和析构函数
