@@ -15,6 +15,6 @@ public:
     std::string to_string() const;
 
 private:
-    int64_t microSecondsSinceEpoch_;
+    int64_t micro_seconds_since_epoch_;
 };
 }

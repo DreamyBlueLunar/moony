@@ -2,17 +2,17 @@
 
 #include <time.h>
 
-moony::time_stamp::time_stamp(): microSecondsSinceEpoch_(0) {}
+moony::time_stamp::time_stamp(): micro_seconds_since_epoch_(0) {}
 
-moony::time_stamp::time_stamp(int microSecondsSinceEpoch):
-    microSecondsSinceEpoch_(microSecondsSinceEpoch) {}
+moony::time_stamp::time_stamp(int micro_seconds_since_epoch):
+    micro_seconds_since_epoch_(micro_seconds_since_epoch) {}
 
 moony::time_stamp moony::time_stamp::now() {
     return time_stamp(time(NULL));
 }
 
 std::string moony::time_stamp::to_string() const {
-    tm* tm = localtime(&microSecondsSinceEpoch_);
+    tm* tm = localtime(&micro_seconds_since_epoch_);
     char buf[32] = {0};
 
     snprintf(buf, 32, "%4d/%02d/%02d %02d:%02d:%02d", 
