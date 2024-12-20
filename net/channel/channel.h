@@ -7,7 +7,7 @@
 #include <functional>
 #include <memory>
 
-namespace lee {
+namespace moony {
 class event_loop;
 
 /**

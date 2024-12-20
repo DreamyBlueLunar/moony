@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 
-namespace lee {
+namespace moony {
 class event_loop;
 class channel;
 

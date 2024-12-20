@@ -4,5 +4,5 @@
 #include "../time_stamp.h"
 
 TEST(TEST_TIME_STAMP, GET_TIME_OF_NOW) {
-    std::cout << lee::time_stamp::now().to_string() << std::endl;
+    std::cout << moony::time_stamp::now().to_string() << std::endl;
 }

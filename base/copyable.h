@@ -1,6 +1,6 @@
 #pragma once
 
-namespace lee {
+namespace moony {
 /* 
  * 设计1：copyable，类似于noncopyable，但功能显然是相反的
  */

@@ -15,7 +15,7 @@
 // size 为要写入的字符的最大数目，超过 size 会被截断，最多写入 size-1 个字符。
 // LOG_INFO("%s, %d", arg1, arg2);
 #define LOG_FMT_INFO(format_msg, ...)  do {                             \
-        lee::logger& logger = lee::logger::get_instance();          \
+        moony::logger& logger = moony::logger::get_instance();          \
         logger.set_log_level(INFO);                                 \
         char buffer[LOG_BUF_LEN] = {0};                             \
         snprintf(buffer, LOG_BUF_LEN, format_msg, ##__VA_ARGS__);  \
@@ -23,7 +23,7 @@
     } while(0)
 
 #define LOG_FMT_ERROR(format_msg, ...)  do {                            \
-        lee::logger& logger = lee::logger::get_instance();          \
+        moony::logger& logger = moony::logger::get_instance();          \
         logger.set_log_level(ERROR);                                \
         char buffer[LOG_BUF_LEN] = {0};                             \
         snprintf(buffer, LOG_BUF_LEN, format_msg, ##__VA_ARGS__);  \
@@ -31,7 +31,7 @@
     } while(0)
 
 #define LOG_FMT_FATAL(format_msg, ...)  do {                            \
-        lee::logger& logger = lee::logger::get_instance();          \
+        moony::logger& logger = moony::logger::get_instance();          \
         logger.set_log_level(FATAL);                                \
         char buffer[LOG_BUF_LEN] = {0};                             \
         snprintf(buffer, LOG_BUF_LEN, format_msg, ##__VA_ARGS__);  \
@@ -41,7 +41,7 @@
 
 #ifdef MUDEBUG
 #define LOG_FMT_DEBUG(format_msg, ...)  do {                            \
-        lee::logger& logger = lee::logger::get_instance();          \
+        moony::logger& logger = moony::logger::get_instance();          \
         logger.set_log_level(DEBUG);                                \
         char buffer[LOG_BUF_LEN] = {0};                             \
         snprintf(buffer, LOG_BUF_LEN, format_msg, ##__VA_ARGS__);  \
@@ -58,7 +58,7 @@ enum log_level {
     DEBUG
 };
 
-namespace lee {
+namespace moony {
 class logger : noncopyable {
 public:
     static logger& get_instance();

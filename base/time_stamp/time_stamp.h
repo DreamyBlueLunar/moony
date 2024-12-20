@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-namespace lee {
+namespace moony {
 class time_stamp {
 public:
     static time_stamp now();

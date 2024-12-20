@@ -6,9 +6,9 @@
 #include <arpa/inet.h>
 #include <string>
 
-namespace lee {
+namespace moony {
 /* 封装 socket 地址 */
-class inetaddress : public lee::copyable {
+class inetaddress : public copyable {
 public:
     explicit inetaddress();
     explicit inetaddress(uint32_t port, std::string ip);
