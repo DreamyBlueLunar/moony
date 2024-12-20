@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../base/current_thread/current_thread.h"
 #include "../../base/time_stamp/time_stamp.h"
 #include "../../base/noncopyable.h"
@@ -27,7 +29,7 @@ public:
     event_loop();
     ~event_loop();
 
-    void loop(); // 开启事件循环
+    void loop(); // 开启事件循环，这个是交给用户调用的接口
     void quit(); // 退出事件循环
 
     time_stamp poller_return_time() const { return poller_return_time_; } // 返回poller发生事件的时间点
@@ -39,7 +41,7 @@ public:
 
     void update_channel(channel* chann); // channel::update 调用的接口，里面调用 poller::update_channel()
     void remove_channel(channel* chann); // channel::remove 调用的接口，里面调用 poller::remove_channel()
-    void has_channel(channel* chann); 
+    bool has_channel(channel* chann); 
 
     bool in_loop_thread() { return thread_id_ == current_thread::tid(); } // 判断 event_loop 对象是否在自己的线程里面
 
@@ -58,14 +60,13 @@ private:
 
     std::unique_ptr<poller> poller_; // event_loop 维护的 poller
 
-    int wakeup_fd; // 当 main_loop 获取到一个新用户的 channel，通过 wakeup_fd 唤醒 sub_loop 处理
-    std::unique_ptr<channel*> wakeup_channel_; // 唤醒的 channel
+    int wakeup_fd_; // 当 main_loop 获取到一个新用户的 channel，通过 wakeup_fd 唤醒 sub_loop 处理
+    std::unique_ptr<channel> wakeup_channel_; // 唤醒的 channel
 
     channel_list active_channels_;
-    channel* current_active_channels_;
 
     std::atomic_bool calling_pending_functors_; // 标记当前是否有需要执行的回调
-    std::vector<functor> pending_functors;      // 存储 loop 需要执行的所有回调
+    std::vector<functor> pending_functors_;      // 存储 loop 需要执行的所有回调
     std::mutex mutex_; // 互斥锁，确保线程安全
 };
 
