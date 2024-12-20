@@ -2,6 +2,7 @@
 
 #include "../../base/noncopyable.h"
 #include "../../base/time_stamp/time_stamp.h"
+#include "../event_loop/event_loop.h"
 
 #include <functional>
 #include <memory>
@@ -14,12 +15,11 @@ class event_loop;
  * A: 一个线程对应一个 event_loop，一个 event_loop 由一个 poller 实现，
  * 而这个线程可以是主线程，可以是工作线程，显然一个线程处理的事件不止一个，
  * 所以可以对应多个 channel。这里的channel显然可以看作是 reactor 感兴趣的事件的封装。
- * 这三个东西组合起来对应 reactor 模型中的 Demultiplexer。
- * 
+ *
  * channel 理解成通道，其中封装了 sockfd 和其感兴趣的事件，如EPOLLIN、EPOLLOUT
- * 还封装了一个 poller 用于监听 fd 上发生的事件
+ * 还封装了一个 poller 用于监听 fd 上发生的事件，对应到 Reactor 上就是事件
  */
-class channel : lee::noncopyable {
+class channel : noncopyable {
 public:
     using event_callback = std::function<void()>;
     using read_event_callback = std::function<void(time_stamp)>;

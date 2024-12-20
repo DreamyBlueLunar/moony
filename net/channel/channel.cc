@@ -26,16 +26,14 @@ void lee::channel::tie(const std::shared_ptr<void>& obj) {
  * 从 event_loop 中删除当前 channel
  */
 void lee::channel::remove() {
-    // add code
-    // loop_->remove_channel(this);
+    loop_->remove_channel(this);
 }
 
 /**
  * 在 event_loop 的 poller 中更新 channel 绑定的事件类型
  */
 void lee::channel::update() {
-    // add code
-    // loop_->update_channel(this);
+    loop_->update_channel(this);
 }
 
 void lee::channel::handle_event(time_stamp receieve_time) {
