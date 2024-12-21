@@ -9,9 +9,10 @@
 namespace moony {
 class base_thread {
 public:
-    using thread_entry = std::function<void()>;
+    using thread_func = std::function<void()>;
 
-    explicit base_thread(thread_entry entry, const std::string& name = "");
+    explicit base_thread(thread_func func, 
+                            const std::string& name = std::string());
     ~base_thread();
 
     void start();
@@ -30,10 +31,9 @@ private:
     bool joined_;
     std::shared_ptr<std::thread> thread_;
     pid_t tid_;
-    thread_entry entry_;
+    thread_func func_;
     std::string name_;
     static std::atomic_int num_created_;
 };
-
 
 }
