@@ -3,10 +3,9 @@
 
 #include <semaphore.h>
 
-std::atomic_int moony::base_thread::num_created_ = 0;
+std::atomic_int moony::base_thread::num_created_{0};
 
-
-explicit moony::base_thread::base_thread(thread_func func, 
+moony::base_thread::base_thread(thread_func func, 
         const std::string& name):
         started_(false),
         joined_(false),
