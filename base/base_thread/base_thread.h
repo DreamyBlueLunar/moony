@@ -20,7 +20,7 @@ public:
 
     bool started() const {  return started_;    }
     bool joined() const {   return joined_; }
-    pid_t pid() const { return tid_;    }
+    pid_t tid() const { return tid_;    }
     const std::string& name() { return name_;   }
     static int num_created() {  return num_created_;    }
 
