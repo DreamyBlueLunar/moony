@@ -27,7 +27,7 @@ void moony::base_thread::start() {
     sem_t sem;
     sem_init(&sem, false, 0);
     
-    thread_ = std::shared_ptr<std::thread>(new std::thread([&](){
+    thread_ = std::shared_ptr<std::thread>(new std::thread([&]() -> void {
         tid_ = current_thread::tid();
         sem_post(&sem);
         func_();
