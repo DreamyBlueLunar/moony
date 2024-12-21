@@ -3,9 +3,9 @@
 
 #include <sys/epoll.h>
 
-const int k_none_event_ = 0;
-const int k_read_event_ = EPOLLIN | EPOLLPRI;
-const int k_write_event_ = EPOLLOUT;
+const int moony::channel::k_none_event_ = 0;
+const int moony::channel::k_read_event_ = EPOLLIN | EPOLLPRI;
+const int moony::channel::k_write_event_ = EPOLLOUT;
 
 moony::channel::channel(moony::event_loop* loop, int fd):
                         loop_(loop), fd_(fd),
