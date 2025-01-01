@@ -18,7 +18,7 @@ public:
     std::string to_ip() const;
     std::string to_ip_port() const;
     uint32_t to_port() const;
-    const sockaddr* get_sock_addr() {   return (const sockaddr*)&addr_;  }
+    const sockaddr* get_sock_addr() const {   return (const sockaddr*)&addr_;  }
 
 private:
     sockaddr_in addr_;
