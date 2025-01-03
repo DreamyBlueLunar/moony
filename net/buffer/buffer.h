@@ -1,12 +1,14 @@
 #pragma once
 
+#include "../../base/copyable.h"
+
 #include <string>
 #include <vector>
 #include <stddef.h>
 #include <algorithm>
 
 namespace moony {
-class buffer {
+class buffer : public copyable {
 public:
     static const size_t k_cheap_prepend_ = 8;
     static const size_t k_initial_size_ = 1024;
