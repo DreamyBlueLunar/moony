@@ -66,6 +66,8 @@ public:
 
     // 从 fd 上读取数据
     ssize_t read_fd(int fd, int* save_errno);
+    // 向 fd 中写入数据
+    ssize_t write_fd(int fd, int* save_errno);
 
 private:
     char* begin() {

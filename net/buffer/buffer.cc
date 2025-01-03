@@ -1,5 +1,7 @@
 #include "buffer.h"
+
 #include <sys/uio.h>
+#include <unistd.h>
 
 /**
  * 从 fd 上读取数据，poller 工作在 LT 模式
@@ -28,5 +30,13 @@ ssize_t moony::buffer::read_fd(int fd, int* save_errno) {
         append(extrabuf, ret - writable);
     }
 
+    return ret;
+}
+
+ssize_t moony::buffer::write_fd(int fd, int* save_errno) {
+    ssize_t ret = ::write(fd, peek(), readable_bytes());
+    if (ret < 0) {
+        *save_errno = errno;
+    }
     return ret;
 }
