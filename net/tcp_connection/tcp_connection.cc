@@ -10,6 +10,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <errno.h>
+#include <string>
+#include <unistd.h>
 
 static moony::event_loop* check_loop_not_null(moony::event_loop* loop) {
     if (nullptr == loop) {
@@ -47,13 +49,85 @@ moony::tcp_connection::tcp_connection(moony::event_loop* loop,
 
 moony::tcp_connection::~tcp_connection() {
     LOG_FMT_INFO("tcp_connection dtor[%s] at fd = %d, state = %d\n",
-        name_.c_str(), channel_->fd(), (int)state_);
+        name_.c_str(), channel_->fd(), static_cast<int>(state_));
 }
+
+void moony::tcp_connection::send(const std::string& buf) {
+    if (k_connected == state_) {
+        if (loop_->in_loop_thread()) {
+            send_in_loop(buf.c_str(), buf.size());
+        } else {
+            loop_->run_in_loop(
+                std::bind(&tcp_connection::send_in_loop,
+                            this,
+                            buf.c_str(),
+                            buf.size()));
+        }
+    }
+}
+
+/**
+ * 发送数据，由于应用写得快，内核写得慢，需要把待发送数据放入缓冲区并设置水位回调
+ * @param
+ * data: 发送数据的起始地址
+ * len: 发送数据的长度
+ */
+void moony::tcp_connection::send_in_loop(const void* data, int len) {
+    ssize_t nwrote = 0;
+    size_t remaining = len;
+    bool fault_error = false;
+
+    if (k_disconnected == state_) {
+        LOG_FMT_ERROR("disconnected, give up writing\n");
+        return ;
+    }
+    // channel_ 第一次发送数据
+    if (!channel_->is_writing() && 0 == output_buffer_.readable_bytes()) {
+        nwrote = ::write(channel_->fd(), data, len);
+        if (nwrote >= 0) {
+            remaining = len - nwrote;
+            // 既然在这里数据全部发送完了，自然也就不用注册 EPOLLOUT 事件，触发 handle_write了
+            if (0 == remaining && write_complete_callback_) {
+                loop_->queue_in_loop(
+                    std::bind(write_complete_callback_, shared_from_this()));
+            }
+        } else { // nwrote < 0
+            nwrote = 0;
+            if (errno != EWOULDBLOCK) {
+                LOG_FMT_ERROR("tcp_connection::send_in_loop\n");
+                if (errno == EPIPE || errno == ECONNRESET) { // SIGPIPE RESET
+                    fault_error = true;
+                }
+            }
+        }
+    }
+
+    // 当前这一次 write 没有把数据全部发送出去，就应该向底层的 poller 注册一个
+    // EPOLLOUT 事件，当 poller 监听到对应的 TCP 缓冲区中有可写空间的时候，就通知
+    // 对应的 channel 调用 (channel::write_callback) => handle_read 回调来写入数据
+    if (!fault_error && remaining > 0) {
+        // 目前 output_buffer_ 中要发送的数据长度
+        size_t oldlen = output_buffer_.readable_bytes();
+        if (oldlen + remaining >= high_water_mark_ &&
+                oldlen < high_water_mark_ &&
+                high_water_mark_callback_) {
+            loop_->queue_in_loop(
+                std::bind(high_water_mark_callback_,
+                            shared_from_this(),
+                            oldlen + remaining));
+        }
+        output_buffer_.append(static_cast<const char*>(data) + nwrote, remaining);
+        if (!channel_->is_writing()) { // 注册 EPOLLOUT 事件     
+            channel_->enable_writing();
+        }
+    }
+}
+
 
 void moony::tcp_connection::handle_read(moony::time_stamp receieve_time) {
     int save_errno = 0;
     ssize_t ret = input_buffer_.read_fd(channel_->fd(), &save_errno);
-    if (ret > 0) {
+    if (ret > 0) { // 已经建立连接的用户，有可读事件发生了，调用用户传入的回调操作 on_message
         message_callback_(shared_from_this(), &input_buffer_, receieve_time);
     } else if (0 == ret) {
         handle_close();
@@ -65,7 +139,7 @@ void moony::tcp_connection::handle_read(moony::time_stamp receieve_time) {
 }
 
 void moony::tcp_connection::handle_write() {
-    if (channel_->is_wrting()) {
+    if (channel_->is_writing()) {
         int save_errno = 0;
         ssize_t ret = output_buffer_.write_fd(channel_->fd(), &save_errno);
         
@@ -86,12 +160,14 @@ void moony::tcp_connection::handle_write() {
             LOG_FMT_ERROR("tcp_connection::handle_write\n");
         }
     } else {
-        LOG_FMT_ERROR("tcp_connection fd = %d is down, no more writing\n", channel_->fd());
+        LOG_FMT_ERROR("tcp_connection fd = %d is down, no more writing\n",
+                        channel_->fd());
     }
 }
 
 void moony::tcp_connection::handle_close() {
-    LOG_FMT_INFO("fd = %d, state = %d\n", channel_->fd(), (int)state_);
+    LOG_FMT_INFO("fd = %d, state = %d\n",
+                channel_->fd(), static_cast<int>(state_));
     set_state(k_disconnected);
     channel_->disable_all();
 

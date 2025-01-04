@@ -49,6 +49,7 @@ public:
 
     // 发送数据
     void send(const void* message, int len);
+    void send(const std::string& buf);
     // 关闭连接
     void shutdown();
 
@@ -88,7 +89,7 @@ private:
     void handle_close();
     void handle_error();
 
-    void send_in_loop(const void* message, int len);
+    void send_in_loop(const void* data, int len);
     void shutdown_in_loop();
     
     event_loop* loop_; // 这个显然是sub_loop
