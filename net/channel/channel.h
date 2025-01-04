@@ -48,7 +48,7 @@ public:
 
     // 返回fd相应的事件状态
     bool is_reading() { return events_ & k_read_event_; }
-    bool is_wrting() { return events_ & k_write_event_; }
+    bool is_writing() { return events_ & k_write_event_; }
     bool is_none_event() { return events_ & k_none_event_;  }
 
     int index() { return idx_;  }
