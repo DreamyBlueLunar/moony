@@ -15,7 +15,14 @@ moony::channel::channel(moony::event_loop* loop, int fd):
 moony::channel::~channel() {}
 
 /**
- * 用一个弱指针绑定当前 channel 以监听其生命周期
+ * channel 调用的回调实际上是 tcp_connection 的成员
+ * tcp_connection => channel
+ * 那这里的 tie_ 指针监听的实际上是 tcp_connection 对象的生命周期
+ * 只有在 tcp_connection 对象还在的时候才能调用对应的回调
+ * 
+ * 绑定 channel 对象和 tcp_connection 对象
+ * @param
+ * obj: 一个强智能指针，指向要绑定的 tcp_connection 对象
  */
 void moony::channel::tie(const std::shared_ptr<void>& obj) {
     tie_ = obj;
