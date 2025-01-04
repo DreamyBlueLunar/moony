@@ -2,10 +2,14 @@
 #include "../../base/logger/logger.h"
 #include "../socket/socket.h"
 #include "../channel/channel.h"
+#include "../event_loop/event_loop.h"
 
 #include <functional>
 #include <errno.h>
 #include <memory>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <errno.h>
 
 static moony::event_loop* check_loop_not_null(moony::event_loop* loop) {
     if (nullptr == loop) {
@@ -43,7 +47,7 @@ moony::tcp_connection::tcp_connection(moony::event_loop* loop,
 
 moony::tcp_connection::~tcp_connection() {
     LOG_FMT_INFO("tcp_connection dtor[%s] at fd = %d, state = %d\n",
-        name_.c_str(), channel_->fd(), state_);
+        name_.c_str(), channel_->fd(), (int)state_);
 }
 
 void moony::tcp_connection::handle_read(moony::time_stamp receieve_time) {
@@ -61,16 +65,52 @@ void moony::tcp_connection::handle_read(moony::time_stamp receieve_time) {
 }
 
 void moony::tcp_connection::handle_write() {
-    int save_errno = 0;
-    ssize_t ret = output_buffer_.write_fd(channel_->fd(), &save_errno);
+    if (channel_->is_wrting()) {
+        int save_errno = 0;
+        ssize_t ret = output_buffer_.write_fd(channel_->fd(), &save_errno);
+        
+        if (ret > 0) {
+            output_buffer_.retrieve(ret);
+            if (0 == output_buffer_.readable_bytes()) { // 如果数据发送完了
+                channel_->disable_writing();
+                if (write_complete_callback_) {
+                    loop_->queue_in_loop( // 唤醒 loop_ 对应的线程，执行回调
+                        std::bind(write_complete_callback_, shared_from_this()));
+                }
 
+                if (k_disconnecting == state_) {
+                    shutdown_in_loop();
+                }
+            }
+        } else {
+            LOG_FMT_ERROR("tcp_connection::handle_write\n");
+        }
+    } else {
+        LOG_FMT_ERROR("tcp_connection fd = %d is down, no more writing\n", channel_->fd());
+    }
 }
 
 void moony::tcp_connection::handle_close() {
+    LOG_FMT_INFO("fd = %d, state = %d\n", channel_->fd(), (int)state_);
+    set_state(k_disconnected);
+    channel_->disable_all();
 
+    tcp_connection_ptr conn(shared_from_this());
+    connection_callback_(conn);
+    close_callback_(conn);
 }
 
 void moony::tcp_connection::handle_error() {
+    int optval;
+    socklen_t optlen = sizeof(optval);
+    int err = 0;
+    if (::getsockopt(channel_->fd(), SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0) {
+        err = errno;
+    } else {
+        err = optval;
+    }
 
+    LOG_FMT_ERROR("tcp_connection::handle_error name = %s, SO_ERROR = %d\n",
+                     name_.c_str(), err);
 }
 
