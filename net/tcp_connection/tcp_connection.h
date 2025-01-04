@@ -80,7 +80,9 @@ public:
 
 private:
     enum state_e {k_disconnected, k_connecting, k_connected, k_disconnecting};
-    
+
+    void set_state(state_e state) { state_ = state; }
+
     void handle_read(time_stamp receieve_time);
     void handle_write();
     void handle_close();
