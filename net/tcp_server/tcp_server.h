@@ -58,7 +58,7 @@ private:
     using connection_map = std::unordered_map<std::string, tcp_connection_ptr>;
 
     // not thread safe, but in loop
-    void new_connection(int sockfd, const inetaddress& addr);
+    void new_connection(int sockfd, const inetaddress& peer_addr);
     // thread safe
     void remove_connection(const tcp_connection_ptr& conn);
     // not thread safe, but in loop
