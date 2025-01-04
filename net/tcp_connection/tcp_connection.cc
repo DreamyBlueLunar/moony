@@ -199,6 +199,7 @@ void moony::tcp_connection::handle_write() {
     }
 }
 
+// poller => channel::close_callback => tcp_connection::handle_close
 void moony::tcp_connection::handle_close() {
     LOG_FMT_INFO("fd = %d, state = %d\n",
                 channel_->fd(), static_cast<int>(state_));
@@ -206,8 +207,8 @@ void moony::tcp_connection::handle_close() {
     channel_->disable_all();
 
     tcp_connection_ptr conn(shared_from_this());
-    connection_callback_(conn);
-    close_callback_(conn);
+    connection_callback_(conn); // 执行关闭连接的回调
+    close_callback_(conn); // 执行的是 tcp_server::remove_connection
 }
 
 void moony::tcp_connection::handle_error() {
