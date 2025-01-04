@@ -48,7 +48,6 @@ public:
     bool disconnected() const { return state_ == k_disconnected;    }
 
     // 发送数据
-    void send(const void* message, int len);
     void send(const std::string& buf);
     // 关闭连接
     void shutdown();

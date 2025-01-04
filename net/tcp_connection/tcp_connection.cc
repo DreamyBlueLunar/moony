@@ -124,6 +124,40 @@ void moony::tcp_connection::send_in_loop(const void* data, int len) {
 }
 
 
+// 连接建立
+void moony::tcp_connection::connection_established() {
+    set_state(k_connected);
+    channel_->tie(shared_from_this()); // 绑定 channel_ 和 this
+    channel_->enable_reading();
+
+    connection_callback_(shared_from_this()); 
+}
+
+// 连接销毁
+void moony::tcp_connection::connection_destroyed() {
+    if (k_connected == state_) {
+        set_state(k_disconnected);
+        channel_->disable_all(); // 把 channel 感兴趣的所有事件全部 delete 掉
+
+        connection_callback_(shared_from_this());
+    }
+    channel_->remove();
+}
+
+void moony::tcp_connection::shutdown() {
+    if (k_connected == state_) {
+        set_state(k_disconnecting);
+        loop_->run_in_loop(
+            std::bind(&tcp_connection::shutdown_in_loop, this));
+    }
+}
+
+void moony::tcp_connection::shutdown_in_loop() {
+    if (!channel_->is_writing()) { // 当前 output_buffer_ 中的数据全部发送完成
+        socket_->shutdown_write(); // 关闭写端
+    }
+}
+
 void moony::tcp_connection::handle_read(moony::time_stamp receieve_time) {
     int save_errno = 0;
     ssize_t ret = input_buffer_.read_fd(channel_->fd(), &save_errno);
