@@ -58,7 +58,7 @@ void moony::tcp_connection::send(const std::string& buf) {
             send_in_loop(buf.c_str(), buf.size());
         } else {
             loop_->run_in_loop(
-                std::bind(&tcp_connection::send_in_loop,
+                std::bind(&moony::tcp_connection::send_in_loop,
                             this,
                             buf.c_str(),
                             buf.size()));
@@ -148,7 +148,7 @@ void moony::tcp_connection::shutdown() {
     if (k_connected == state_) {
         set_state(k_disconnecting);
         loop_->run_in_loop(
-            std::bind(&tcp_connection::shutdown_in_loop, this));
+            std::bind(&moony::tcp_connection::shutdown_in_loop, this));
     }
 }
 
