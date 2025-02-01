@@ -27,7 +27,8 @@ moony::tcp_server::tcp_server(moony::event_loop* loop,
         thread_pool_(new moony::event_loop_thread_pool(loop, name)),
         connection_callback_(),
         message_callback_(),
-        next_id_(1) {
+        next_id_(1),
+        started_(0) {
     // 当有新用户连接时，会执行 tcp_server::new_connection() 回调
     // 对应到代码上就是 acceptor::handle_read()
     acceptor_->set_connection_callback(
