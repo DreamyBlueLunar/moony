@@ -10,6 +10,9 @@
 #include "../../base/noncopyable.h"
 #include "../../base/callbacks.h"
 #include "../event_loop_thread_pool/event_loop_thread_pool.h"
+#include "../../base/callbacks.h"
+#include "../tcp_connection/tcp_connection.h"
+#include "../buffer/buffer.h"
 
 #include <functional>
 #include <unordered_map>
