@@ -22,10 +22,11 @@ moony::event_loop_thread::~event_loop_thread() {
 
 moony::event_loop* moony::event_loop_thread::start_loop() {
     thread_.start(); // 启动底层的新线程
+    
     event_loop* loop = nullptr;
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        while (nullptr == loop) {
+        while (nullptr == loop_) {
             cond_.wait(lock);
         }
         loop = loop_;
