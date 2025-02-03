@@ -16,10 +16,7 @@ if [ ! -d /usr/include/moony ]; then
     mkdir /usr/include/moony
 fi
 
-for header in `find . -name "*.h"`
-do
-    cp $header /usr/include/moony
-done
+cp -r `pwd`/* /usr/include/moony
 
 cp `pwd`/lib/libleemuduo.so /usr/lib
 
