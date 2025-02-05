@@ -111,8 +111,7 @@ void moony::epoll_poller::update(int op, moony::channel* chann) {
     epoll_event ev;
     bzero(&ev, sizeof(epoll_event));
     ev.data.ptr = chann;
-    ev.data.fd = chann->fd();
-    ev.events |= chann->events();
+    ev.events = chann->events();
     int fd = chann->fd();
 
     if (::epoll_ctl(epoll_fd_, op, fd, &ev) < 0) {

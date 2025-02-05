@@ -9,7 +9,7 @@
 
 static moony::event_loop* check_loop_not_null(moony::event_loop* loop) {
     if (nullptr == loop) {
-        LOG_FMT_FATAL("%s:%s:%d main loop is null",
+        LOG_FMT_FATAL("%s:%s:%d main loop is null\n",
                         __FILE__, __FUNCTION__, __LINE__);        
     }
 
@@ -122,7 +122,7 @@ void
 moony::tcp_server::remove_connection_in_loop(
         const moony::tcp_connection_ptr& conn) {
     LOG_FMT_INFO(
-        "tcp_server::remove_connection_in_loop [%s] - connection %s",
+        "tcp_server::remove_connection_in_loop [%s] - connection %s\n",
         name_.c_str(), conn->name().c_str());
 
     connections_.erase(conn->name());
