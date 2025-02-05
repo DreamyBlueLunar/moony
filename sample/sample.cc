@@ -11,9 +11,11 @@ public:
             const std::string& name):
                 server_(loop, addr, name), loop_(loop) {
         // set callbacks
-        std::bind(&echo_server::on_connection, this, std::placeholders::_1);
-        std::bind(&echo_server::on_message, this, 
-                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+        server_.set_connection_callback(
+            std::bind(&echo_server::on_connection, this, std::placeholders::_1));
+        server_.set_message_callback(
+            std::bind(&echo_server::on_message, this, 
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
         // set thread nums
         server_.set_thread_num(3);
     }
