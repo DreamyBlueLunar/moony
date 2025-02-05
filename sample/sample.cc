@@ -39,7 +39,7 @@ private:
             moony::time_stamp time) {
         std::string msg = buf->retrieve_all_as_string();
         conn->send(msg);
-        conn->shutdown(); // 关闭写端 EPOLLHUP close_call_back_ 服务器主动关闭连接
+        // conn->shutdown(); // 关闭写端 EPOLLHUP close_call_back_ 服务器主动关闭连接
     }
 
     moony::event_loop* loop_;
@@ -48,7 +48,7 @@ private:
 
 int main(void) {
     moony::event_loop loop;
-    moony::inetaddress addr;
+    moony::inetaddress addr(8000, "0.0.0.0");
     
     echo_server server(&loop, addr, "echo_server_01");
     
