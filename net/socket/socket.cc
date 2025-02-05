@@ -33,7 +33,7 @@ int moony::socket::accept(inetaddress* peer_addr) {
     bzero(&addr, sizeof(sockaddr_in));
     socklen_t len = sizeof(sockaddr);
 
-    int connfd = ::accept(sockfd_, (sockaddr*)&addr, &len);
+    int connfd = ::accept4(sockfd_, (sockaddr*)&addr, &len, SOCK_NONBLOCK | SOCK_CLOEXEC);
     if (connfd >= 0) {
         peer_addr->set_sock_addr(addr);
     }
