@@ -109,8 +109,7 @@ void moony::tcp_server::new_connection(int sockfd,
         std::bind(&moony::tcp_connection::connection_established, conn));
 }
 
-void 
-moony::tcp_server::remove_connection(
+void moony::tcp_server::remove_connection(
         const moony::tcp_connection_ptr& conn) {
     loop_->run_in_loop(
         std::bind(&moony::tcp_server::remove_connection_in_loop,
@@ -118,8 +117,7 @@ moony::tcp_server::remove_connection(
                     conn));
 }
 
-void 
-moony::tcp_server::remove_connection_in_loop(
+void moony::tcp_server::remove_connection_in_loop(
         const moony::tcp_connection_ptr& conn) {
     LOG_FMT_INFO(
         "tcp_server::remove_connection_in_loop [%s] - connection %s\n",
