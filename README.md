@@ -1,6 +1,6 @@
 # moony
 
-## Phase 1: muduo 网络库的设计与其在 muduo 中对应的组件
+## muduo 网络库的设计与其在 muduo 中对应的组件
 理论上，每一个线程（thread）对应一个事件循环（event loop），每一个事件循环对应一个I/O复用接口（select、poll、epoll），每一个I/O复用接口监听多个文件描述符（fd），而一个事件（event）对应一个 fd，也就是说，一个I/O复用接口监听多个该线程感兴趣的事件。<br>
 
 对应到 muduo 中的组件，我们可以发现：<br>
@@ -35,5 +35,3 @@ prependable(8)   readeridx   writeridx
 
 ### tcp_server
 将所有的组件全部串起来
-
-## Phase 2: muduo 网络库执行流程
